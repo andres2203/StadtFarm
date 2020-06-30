@@ -1,5 +1,5 @@
 # StadtFarm
-How to build and program a Vertical Garden for growing hydro cultures with Arduino UNO.
+How to build and program a vertical garden for growing hydro cultures with Arduino UNO.
 
 ## Introduction
 
@@ -17,7 +17,7 @@ How to build and program a Vertical Garden for growing hydro cultures with Ardui
 * 4 Relais Module
 * Arduino Uno or Elegoo UNO R3
 * 220V/AC to 12V/DC
-* small Breadboard
+* Small Breadboard
 * 12V Pump
 * 300W LED grow light
 * 15W LED grow light
@@ -26,9 +26,9 @@ How to build and program a Vertical Garden for growing hydro cultures with Ardui
 
 ## 3.0 Getting Started
 1. [Build shelve](https://cad.onshape.com/documents/f8f54480ea3bf53fba16157c/w/51a61f7f288ccbb844862388/e/fdeeb675309a4b794120bc05)
-2. Connect Arduino
-3. Update Code
-4. Assemble shelve and air pressure sensor
+2. Connect Arduino, see electrical plan "E-Plan, StadtFarm-Arduino-Uno" ([QElectroTech](qelectrotech.org/))
+3. Update Code using [Arduino IDE](https://www.arduino.cc/en/Main/Software)
+4. Assemble shelve and microprocessor and sensors
 
 
 
@@ -36,13 +36,18 @@ How to build and program a Vertical Garden for growing hydro cultures with Ardui
 ## 4.0 Instructions
 ### 4.1 Plants for hydro culture
 ### 4.2 Maintenance
+* Fertilizer usage
+* Shelve usage and management
 
 ## 5.0 Troubleshooting
 
 ## 6.0 Future development
-* humidity sensor
+* air humidity sensor
 * LCD display
 * Wifi connector and App data management
-* Temperature and 
+* Temperature sensor
+* optical device for Chlorophyll sensing and develop an AI
 
 ## Contributors
+* [Light relais module](https://randomnerdtutorials.com)
+* Light senor code, written by Mohannad Rawashdeh
