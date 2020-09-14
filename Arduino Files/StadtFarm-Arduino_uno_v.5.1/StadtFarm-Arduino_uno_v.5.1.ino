@@ -1,5 +1,5 @@
 //////////// StadtFarm ////////////
-bool program_version = 1.000;
+float program_version = 1.00;
 
 int ResetPin = 12; //For Arduino Reset if Sensors are not working properly
 //#include <Arduino.h>
@@ -43,8 +43,8 @@ long Delay_long = 10000;
 #define pumpSwitch_1 8 // This is the Arduino Pin that will control pump switch
 //#define pumpSwitch_2 3
 
-int delayPump = 2000; //pump delay time between cycles in ms
-int runnningPump = 1000; // running Timer for pumps in ms
+int delayPump = 30000; //pump delay time between cycles in ms
+int runnningPump = 10000; // running Timer for pumps in ms
 bool pumpState = HIGH; // bool for switch
 unsigned long Timer = 0;
 
@@ -215,14 +215,134 @@ void setupReboot(){
 
 
 void loop() {
-
   pumpManagement();
   LightSensorModule();
   RGBLight();
   GrowLight();
-  Display(); //  RTCtime(); included
   Alarms();
+  Display();
+  
   RebootSystem();
+}
+
+//////////// Light Sensor BH1750 ////////////
+void LightSensorModule() {
+  uint16_t lux = LightSensor.GetLightIntensity();// Get Lux value
+  if (lux == 0 || lux > 54000){
+    Serial.print("Light Sensor might not working properly "); // Checks if Sensoroutput is to low or to hight and resets Arduino
+    delay(10);
+    Serial.println();
+    Serial.print("resetting...");
+    delay(2000); // wait 2 sec before resetting
+    digitalWrite(ResetPin, LOW); //Resets Arduino
+    }
+  //LightSensor.Sleep(); //Sensor in Sleep Mode
+
+  // if (lux >= 500) {
+  //  send(msg.set(lux));
+  //  LightSensor.end();
+}
+
+//////////// Grow Light Relais Module ////////////
+void GrowLight(){
+  DateTime now = rtc.now();
+  uint16_t lux = LightSensor.GetLightIntensity();// Get Lux value
+  if ((9 <= now.hour() && 18 >= now.hour()) && (lux <= 400) == true) {
+    digitalWrite(Light_1, HIGH);     //Switch Relay #2 On
+    digitalWrite(Light_2, HIGH);     //Switch Relay #3 On
+    digitalWrite(Light_3, HIGH);     //Switch Relay #4 On
+    digitalWrite(Light_4, HIGH);     //Switch Relay #5 On
+  }else {
+    digitalWrite(Light_1, LOW);     //Switch Relay #2 OFF (in NO (Normaly open) Mode)
+    digitalWrite(Light_3, LOW);     //Switch Relay #3 OFF (in NO (Normaly open) Mode)
+    digitalWrite(Light_3, LOW);     //Switch Relay #4 OFF (in NO (Normaly open) Mode)
+    digitalWrite(Light_4, LOW);     //Switch Relay #5 OFF (in NO (Normaly open) Mode)
+    }
+}
+
+
+//////////// Pump Switch Modules ////////////
+void pumpManagement() {
+  digitalWrite(pumpSwitch_1, pumpState);
+
+  if (pumpState == HIGH){
+    if((millis() - Timer) >= runnningPump){
+      pumpState = LOW;
+      Timer = millis();
+      }
+    }else {
+      if((millis() - Timer) >= delayPump){
+        pumpState = HIGH;
+        Timer = millis();
+      }
+    }
+}
+
+//////////// System RGB ////////////
+void RGBLight(){
+  if (pumpState == HIGH){
+    if ((millis() - RGBTimer) > RGBDelay_b){
+      RGBTimer = millis();
+      RGBBlinkState = !RGBBlinkState;
+      digitalWrite(LEDblue, RGBBlinkState); // led on
+    }
+  }else {
+    digitalWrite(LEDblue, LOW);
+    }
+}
+
+//////////// Display ////////////
+void Display(){
+  if (millis() - DisplayTimer > DisplayDelay){
+    DisplayTimer = millis();
+    _Display();
+  }
+}
+
+void _Display(){
+  RTCtime();
+  if (Light_1 == HIGH){ // || Light_2 == HIGH || Light_3 == HIGH || Light_4 == HIGH){
+    Serial.println("StadtFarm in day mode, grow light on)");
+  }else {
+    Serial.println("StadtFarm in Night Mode");
+  }
+  
+  uint16_t lux = LightSensor.GetLightIntensity();// Get Lux value
+  Serial.print("Light intensity: ");
+  Serial.print(lux);
+  Serial.println(" lux");
+
+  Serial.print("Temperature: ");
+  Serial.print(rtc.getTemperature());
+  Serial.println(" C");
+
+  if(pumpState == HIGH){
+    Serial.print("watering Pump running... ");
+    Serial.println();
+  }
+}
+
+//////////// Alarms  ////////////
+void Alarms(){
+
+  if (rtc.getTemperature() >= 80){
+    Serial.println("Board Temperature exceeded critical limit of 80°C, StadtFarm will be stopped for 5 minutes (current Temperature: ");
+    Serial.print(rtc.getTemperature());
+    Serial.println(" C");
+    delay(5000);
+  }
+
+}
+
+//////////// Reboot ////////////
+void RebootSystem(){
+  if((millis() - RebootTimer) > RebootDelay){
+    RebootTimer = millis();
+    Serial.println();
+    Serial.println("StadtFarm ist rebooting, this is a routine operation, please waite... ");
+    delay(10000);
+    digitalWrite(ResetPin, LOW); //Resets Arduino
+  }
 
 }
 
@@ -245,138 +365,6 @@ void RTCtime(){
   Serial.print(':');
   Serial.print(now.second(), DEC);
   Serial.println();
-
-}
-
-//////////// Light Sensor BH1750 ////////////
-void LightSensorModule() {
-  uint16_t lux = LightSensor.GetLightIntensity();// Get Lux value
-  if (lux == 0 || lux > 54000){
-    Serial.print("Light Sensor might not working properly "); // Checks if Sensoroutput is to low or to hight and resets Arduino
-    delay(10);
-    Serial.println();
-    Serial.print("resetting...");
-    delay(2000); // wait 2 sec before resetting
-    digitalWrite(ResetPin, LOW); //Resets Arduino
-    }else{    
-    }
-    
-  // LightSensor.Sleep(); //Sensor in Sleep Mode
-
-  // if (lux >= 500) {
-  //  send(msg.set(lux));
-  //  LightSensor.end();
-}
-
-//////////// Grow Light Relais Module ////////////
-void GrowLight(){
-  DateTime now = rtc.now();
-  uint16_t lux = LightSensor.GetLightIntensity();// Get Lux value
-  //int LightRelais = Light_1 && Light_2 && Light_3 && Light_4; //controll all Light relais at once
-  if ((1 <= now.hour() && 18 >= now.hour()) && (lux <= 400) == true) {
-    digitalWrite(Light_1, HIGH);     //Switch Relay #2 On
-    digitalWrite(Light_2, HIGH);     //Switch Relay #3 On
-    digitalWrite(Light_3, HIGH);     //Switch Relay #4 On
-    digitalWrite(Light_4, HIGH);     //Switch Relay #5 On
-//    Serial.println("Grow light on");
-  }else {
-    digitalWrite(Light_1, LOW);     //Switch Relay #2 OFF (in NO (Normaly open) Mode)
-    digitalWrite(Light_3, LOW);     //Switch Relay #3 OFF (in NO (Normaly open) Mode)
-    digitalWrite(Light_3, LOW);     //Switch Relay #4 OFF (in NO (Normaly open) Mode)
-    digitalWrite(Light_4, LOW);     //Switch Relay #5 OFF (in NO (Normaly open) Mode)
-    }
-}
-
-
-//////////// Pump Switch Modules ////////////
-void pumpManagement() {
-  digitalWrite(pumpSwitch_1, pumpState);
-
-  if (pumpState == HIGH){
-    if((millis() - Timer) >= runnningPump){
-        pumpState = LOW;
-        Timer = millis();
-      }
-  }else {
-    if((millis() - Timer) >= delayPump){
-        pumpState = HIGH;
-        Timer = millis();
-      }
-    }
-   if (pumpState == HIGH){
-    Serial.println("watering Pump running... ");
-    }
-}
-
-
-//////////// System RGB ////////////
-void RGBLight(){
-  if (pumpState == HIGH){
-    if ((millis() - RGBTimer) > RGBDelay_a){
-      RGBTimer = millis();
-      RGBBlinkState = !RGBBlinkState;
-      digitalWrite(LEDblue, RGBBlinkState); // led on
-    }
-  }else{
-    digitalWrite(LEDblue, LOW);
-    }
-}
-
-
-//////////// Display ////////////
-void Display(){
-  if (millis() - DisplayTimer > DisplayDelay){
-    DisplayTimer = millis();
-    _Display();
-  }
-}
-
-void _Display(){
-  RTCtime();
-  if(Light_1 == HIGH || Light_2 == HIGH || Light_3 == HIGH || Light_4 == HIGH){
-    Serial.println("StadtFarm in day mode, grow light on)");
-  }else{
-    Serial.println("StadtFarm in Night Mode");
-  }
-  
-  uint16_t lux = LightSensor.GetLightIntensity();// Get Lux value
-  Serial.print("Light intensity: ");
-  Serial.print(lux);
-  Serial.println(" lux");
-
-  Serial.print("Temperature: ");
-  Serial.print(rtc.getTemperature());
-  Serial.println(" C");
-
-  if(pumpState == HIGH){
-    Serial.print("watering Pump running... ");
-    Serial.println();
-  }
-  Serial.println(pumpState);
-}
-
-//////////// Alarms  ////////////
-void Alarms(){
-/*
-  if (rtc.getTemperature() >= 80){
-    Serial.println("Board Temperature exceeded critical limit of 80°C, StadtFarm will be stopped for 5 minutes (current Temperature: ");
-    Serial.print(rtc.getTemperature());
-    Serial.println(" C");
-    delay(5000);
-  }
-*/
-}
-
-//////////// Reboot ////////////
-void RebootSystem(){
-  if((millis() - RebootTimer) > RebootDelay){
-    RebootTimer = millis();
-    Serial.println();
-    Serial.println("StadtFarm ist rebooting, this is a routine operation, please waite... ");
-    delay(10000);
-    digitalWrite(ResetPin, LOW); //Resets Arduino
-  }
-
 }
 
 
