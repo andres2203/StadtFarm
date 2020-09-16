@@ -1,5 +1,9 @@
+// To Do:
+/// Grow light doent reakt to light sensor threshhold
+
+
 //////////// StadtFarm ////////////
-float program_version = 1.00;
+float program_version = 1.10;
 
 int ResetPin = 12; //For Arduino Reset if Sensors are not working properly
 //#include <Arduino.h>
@@ -26,6 +30,11 @@ unsigned long RGBTimer = 0; //will be rewriten on every loop
 #define Light_2 3
 #define Light_3 4
 #define Light_4 5
+
+int day_start = 0; // time to start artificial light
+int day_end = 20; // time to end artificial light
+long lux_limit = 400; // threshold for artificial light
+bool light_status = LOW;
 // long luxstate; // lux value for comparison
 //volatile byte relayState = LOW;
 
@@ -168,6 +177,11 @@ void setupGrowLight(){
   pinMode(Light_2, OUTPUT);
   pinMode(Light_3, OUTPUT);
   pinMode(Light_4, OUTPUT);
+  
+  //digitalWrite(Light_1  light_status);
+  //digitalWrite(Light_2, light_status);
+  //digitalWrite(Light_3, light_status);
+  //digitalWrite(Light_4, light_status);
   Serial.println("starting Grow Light module...");
   delay(500);
 }
@@ -243,20 +257,25 @@ void LightSensorModule() {
   //  LightSensor.end();
 }
 
+
+
+
 //////////// Grow Light Relais Module ////////////
 void GrowLight(){
   DateTime now = rtc.now();
   uint16_t lux = LightSensor.GetLightIntensity();// Get Lux value
-  if ((9 <= now.hour() && 20 >= now.hour()) && (lux <= 400) == true) {
-    digitalWrite(Light_1, HIGH);     //Switch Relay #2 On
-    digitalWrite(Light_2, HIGH);     //Switch Relay #3 On
-    digitalWrite(Light_3, HIGH);     //Switch Relay #4 On
-    digitalWrite(Light_4, HIGH);     //Switch Relay #5 On
+  if ((day_start <= now.hour() && day_end >= now.hour()) == true && (lux <= lux_limit) == true){
+    light_status = HIGH;
+    digitalWrite(Light_1, light_status);// Light_2 && Light_3 && Light_4, light_status);     //Switch Relay #2 On
+    digitalWrite(Light_2, light_status);     //Switch Relay #3 On
+    digitalWrite(Light_3, light_status);     //Switch Relay #4 On
+    digitalWrite(Light_4, light_status);     //Switch Relay #5 On
   }else {
-    digitalWrite(Light_1, LOW);     //Switch Relay #2 OFF (in NO (Normaly open) Mode)
-    digitalWrite(Light_3, LOW);     //Switch Relay #3 OFF (in NO (Normaly open) Mode)
-    digitalWrite(Light_3, LOW);     //Switch Relay #4 OFF (in NO (Normaly open) Mode)
-    digitalWrite(Light_4, LOW);     //Switch Relay #5 OFF (in NO (Normaly open) Mode)
+    light_status = LOW;
+    digitalWrite(Light_1, light_status); //&& Light_2 && Light_3 && Light_4, light_status);     //Switch Relay #2 OFF (in NO (Normaly open) Mode)
+    digitalWrite(Light_3, light_status);     //Switch Relay #3 OFF (in NO (Normaly open) Mode)
+    digitalWrite(Light_3, light_status);     //Switch Relay #4 OFF (in NO (Normaly open) Mode)
+    digitalWrite(Light_4, light_status);     //Switch Relay #5 OFF (in NO (Normaly open) Mode)
     }
 }
 
@@ -301,9 +320,7 @@ void Display(){
 
 void _Display(){
   RTCtime();
-  Serial.println(Light_1);
-  Serial.println(Light_2);
-  if (Light_1 == HIGH){
+  if (light_status == HIGH){
     Serial.println("StadtFarm in day mode, grow light on");
   }else {
     Serial.println("StadtFarm in Night Mode");

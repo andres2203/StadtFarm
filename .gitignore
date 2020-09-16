@@ -149,5 +149,13 @@ dmypy.json
 # pytype static type analyzer
 .pytype/
 
+# Ignore Folders
+## Folders with exaple data
+Python Version/
+Arduino Files/#Ablage/
+#ablage/
+
+
+
 # End of https://www.toptal.com/developers/gitignore/api/python,jupyternotebooks
 
