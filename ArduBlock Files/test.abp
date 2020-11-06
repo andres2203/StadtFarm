@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<cb:CODEBLOCKS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://education.mit.edu/openblocks/ns http://education.mit.edu/openblocks/codeblocks.xsd" xmlns:cb="http://education.mit.edu/openblocks/ns">
+    <Pages collapsible-pages="yes" drawer-with-page="yes">
+        <Page page-color="40 40 40" page-drawer="ArduBlock" page-infullview="yes" page-name="ArduBlock" page-width="1920">
+            <PageBlocks>
+                <Block genus-name="pin-write-digital" id="169">
+                    <Location>
+                        <X>7</X>
+                        <Y>222</Y>
+                    </Location>
+                    <BeforeBlockId>166</BeforeBlockId>
+                    <Sockets num-sockets="2">
+                        <BlockConnector con-block-id="170" connector-kind="socket" connector-type="number" init-type="number" label="#" position-type="single"/>
+                        <BlockConnector con-block-id="171" connector-kind="socket" connector-type="boolean" init-type="boolean" label="" position-type="single"/>
+                    </Sockets>
+                </Block>
+                <Block genus-name="digital-high" id="171">
+                    <Location>
+                        <X>151</X>
+                        <Y>249</Y>
+                    </Location>
+                    <Plug>
+                        <BlockConnector con-block-id="169" connector-kind="plug" connector-type="boolean" init-type="boolean" label="" position-type="mirror"/>
+                    </Plug>
+                </Block>
+                <Block genus-name="number" id="170">
+                    <Location>
+                        <X>151</X>
+                        <Y>225</Y>
+                    </Location>
+                    <Plug>
+                        <BlockConnector con-block-id="169" connector-kind="plug" connector-type="number" init-type="number" label="" position-type="mirror"/>
+                    </Plug>
+                </Block>
+                <Block genus-name="pin-write-digital" id="166">
+                    <Location>
+                        <X>7</X>
+                        <Y>168</Y>
+                    </Location>
+                    <BeforeBlockId>163</BeforeBlockId>
+                    <AfterBlockId>169</AfterBlockId>
+                    <Sockets num-sockets="2">
+                        <BlockConnector con-block-id="167" connector-kind="socket" connector-type="number" init-type="number" label="#" position-type="single"/>
+                        <BlockConnector con-block-id="168" connector-kind="socket" connector-type="boolean" init-type="boolean" label="" position-type="single"/>
+                    </Sockets>
+                </Block>
+                <Block genus-name="digital-high" id="168">
+                    <Location>
+                        <X>151</X>
+                        <Y>195</Y>
+                    </Location>
+                    <Plug>
+                        <BlockConnector con-block-id="166" connector-kind="plug" connector-type="boolean" init-type="boolean" label="" position-type="mirror"/>
+                    </Plug>
+                </Block>
+                <Block genus-name="number" id="167">
+                    <Location>
+                        <X>151</X>
+                        <Y>171</Y>
+                    </Location>
+                    <Plug>
+                        <BlockConnector con-block-id="166" connector-kind="plug" connector-type="number" init-type="number" label="" position-type="mirror"/>
+                    </Plug>
+                </Block>
+                <Block genus-name="pin-write-digital" id="163">
+                    <Location>
+                        <X>7</X>
+                        <Y>114</Y>
+                    </Location>
+                    <BeforeBlockId>160</BeforeBlockId>
+                    <AfterBlockId>166</AfterBlockId>
+                    <Sockets num-sockets="2">
+                        <BlockConnector con-block-id="164" connector-kind="socket" connector-type="number" init-type="number" label="#" position-type="single"/>
+                        <BlockConnector con-block-id="165" connector-kind="socket" connector-type="boolean" init-type="boolean" label="" position-type="single"/>
+                    </Sockets>
+                </Block>
+                <Block genus-name="digital-high" id="165">
+                    <Location>
+                        <X>151</X>
+                        <Y>141</Y>
+                    </Location>
+                    <Plug>
+                        <BlockConnector con-block-id="163" connector-kind="plug" connector-type="boolean" init-type="boolean" label="" position-type="mirror"/>
+                    </Plug>
+                </Block>
+                <Block genus-name="number" id="164">
+                    <Location>
+                        <X>151</X>
+                        <Y>117</Y>
+                    </Location>
+                    <Plug>
+                        <BlockConnector con-block-id="163" connector-kind="plug" connector-type="number" init-type="number" label="" position-type="mirror"/>
+                    </Plug>
+                </Block>
+                <Block genus-name="pin-write-digital" id="160">
+                    <Location>
+                        <X>7</X>
+                        <Y>60</Y>
+                    </Location>
+                    <AfterBlockId>163</AfterBlockId>
+                    <Sockets num-sockets="2">
+                        <BlockConnector con-block-id="161" connector-kind="socket" connector-type="number" init-type="number" label="#" position-type="single"/>
+                        <BlockConnector con-block-id="162" connector-kind="socket" connector-type="boolean" init-type="boolean" label="" position-type="single"/>
+                    </Sockets>
+                </Block>
+                <Block genus-name="digital-high" id="162">
+                    <Location>
+                        <X>151</X>
+                        <Y>87</Y>
+                    </Location>
+                    <Plug>
+                        <BlockConnector con-block-id="160" connector-kind="plug" connector-type="boolean" init-type="boolean" label="" position-type="mirror"/>
+                    </Plug>
+                </Block>
+                <Block genus-name="number" id="161">
+                    <Location>
+                        <X>151</X>
+                        <Y>63</Y>
+                    </Location>
+                    <Plug>
+                        <BlockConnector con-block-id="160" connector-kind="plug" connector-type="number" init-type="number" label="" position-type="mirror"/>
+                    </Plug>
+                </Block>
+            </PageBlocks>
+        </Page>
+    </Pages>
+</cb:CODEBLOCKS>

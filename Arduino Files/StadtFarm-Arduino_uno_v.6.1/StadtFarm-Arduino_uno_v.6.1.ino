@@ -7,6 +7,14 @@
 //////////// StadtFarm ////////////
 float program_version = 1.10;
 
+// Useful Constants
+#define MILISEC_PER_SEC (1000UL)
+#define MILISEC_PER_MIN (MILISEC_PER_SEC * 60UL)
+#define MILISEC_PER_HOUR (MILISEC_PER_MIN * 60UL)
+#define SECS_PER_MIN  (60UL)
+#define SECS_PER_HOUR (3600UL)
+#define SECS_PER_DAY  (SECS_PER_HOUR * 24L)
+
 int ResetPin = 12; //For Arduino Reset if Sensors are not working properly
 //#include <Arduino.h>
 // #include <SoftwareSerial.h>
@@ -21,10 +29,10 @@ int brightness1a = 50; // Nr between 0 and 255 for brightness of LED
 int brightness1b = 150; 
 int brightness1c = 250; 
 int RGB_off = 0; // 0 for LED of = 0V
-int RGBDelay_a = 200; //Blink frequency
-int RGBDelay_b = 500;
+long RGBDelay_a = 200; //Blink frequency
+long RGBDelay_b = 500;
 bool RGBBlinkState = HIGH;
-unsigned long RGBTimer = 0; //will be rewriten on every loop
+unsigned long RGBTimer = 0; // will be rewriten on every loop
 
 
 //////////// Light Relais Module ////////////
@@ -33,29 +41,20 @@ unsigned long RGBTimer = 0; //will be rewriten on every loop
 #define Light_3 4
 #define Light_4 5
 
-int day_start = 12; // time to start artificial light
-int day_end = 24; // time to end artificial light
-long lux_limit = 400; // threshold for artificial light
+int day_start = 9; // time to start artificial light
+int day_end = 20; // time to end artificial light
+bool day_time = true;
+unsigned long lux_limit = 400; // threshold for artificial light
 bool light_status = LOW;
 // long luxstate; // lux value for comparison
 //volatile byte relayState = LOW;
 
-
-//////////// Timer Variables ////////////
-long lastDebounceTime = 0;  
-long Delay_long_a = 500; // delay 0,5 sec
-long Delay_long_b = 1000; // delay 1 sec
-long Delay_long_c = 10000; // delay 10 sec
-long Delay_long = 10000;
-//const long LEDInterval = 100; // interval at which to blink
-
-
-// Pump Switch Modules ////////////
+//////////// Pump Switch Modules ////////////
 #define pumpSwitch_1 8 // This is the Arduino Pin that will control pump switch
 //#define pumpSwitch_2 3
 
-int delayPump = 60000; //pump delay time between cycles in ms
-int runnningPump = 10000; // running Timer for pumps in ms
+unsigned long delayPump = MILISEC_PER_MIN * 60; // pump delay time between cycles in Min (positive numbers, 32bit)
+unsigned long runnningPump = MILISEC_PER_MIN * 20; // running Timer for pumps in Min.
 bool pumpState = HIGH; // bool for switch
 unsigned long Timer = 0;
 
@@ -63,10 +62,9 @@ unsigned long Timer = 0;
 // Date and time functions using a DS3231 RTC connected via I2C and Wire lib, on SCL, SDA Pin
 #include "RTClib.h"
 RTC_DS3231 rtc;
-char daysOfTheWeek[7][12] = {"Sun", "Mod", "Tue", "Wed", "Thu", "Fri", "Sat"};
+char daysOfTheWeek[7][12] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
 
-
-// Light Sensor BH1750 ////////////
+//////////// Light Sensor BH1750 ////////////
 //This is a simple code to test BH1750FVI Light senosr communicate using I2C Protocol this library enable 2 slave device address
 //Main address  0x23, secondary address 0x5C, connect this sensor as following:
 //VCC >>> 3.3V, SDA >>> A4 --> use of I2C Protocoll, can be added to RTC
@@ -78,13 +76,18 @@ char daysOfTheWeek[7][12] = {"Sun", "Mod", "Tue", "Wed", "Thu", "Fri", "Sat"};
 //stop_light 600;
 BH1750FVI LightSensor;
 
-// Display ////////////
-unsigned long DisplayTimer = 0; //will be set current time every loop
-int DisplayDelay = 2000; //delay between reloading display
+//////////// EEPROM Storage ////////////
+// stores analog values from 0-255
+#include <EEPROM.h>  // include the internale arduino storage
+int addr = 0;  // the current address in the EEPROM (i.e. which byte we're going to write to next)
 
-// Reboot ////////////
+//////////// Display ////////////
+unsigned long DisplayTimer = 0; //will be set current time every loop
+unsigned DisplayDelay = 2000L; //delay between reloading display
+
+//////////// Reboot ////////////
 unsigned long RebootTimer = 0;
-int RebootDelay = 604800000; //will be set current time every loop
+unsigned long RebootDelay = MILISEC_PER_HOUR * 24 * 7; // reboot every 7 days, time in hours
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////SETUP///////////////////////////////////////////////////////////
@@ -113,8 +116,6 @@ void setup() {
   
   setupDelay();
   setupReboot();
-
-
 }
 
 //////////// Light Sensor BH1750 ////////////
@@ -136,7 +137,7 @@ OneTime_H_resolution_Mode2
 OneTime_L_resolution_Mode
 The data sheet recommanded To use Continuous_H_resolution_Mode */
   LightSensor.SetMode(Continuous_H_resolution_Mode);
-  Serial.println("starting Light Sensor...");
+  Serial.println("starting Light Sensor");
   delay(500);
 }
 
@@ -167,11 +168,10 @@ void setupRTC(){
   // rtc.adjust(DateTime(F(__DATE__), F(__TIME__))); //write current date here
 // This line sets the RTC with an explicit date & time, for example to set
 // January 21, 2020 at 3am you would call:
-// rtc.adjust(DateTime(2020, 1, 21, 3, 0, 0)); //Year, Month, Day, Hour, Min
+// rtc.adjust(DateTime(2020, 10, 26, 8, 44, 0)); //Year, Month, Day, Hour, Min
   Serial.println("starting Time module...");
   delay(500);
 }
-
 
 //////////// Light Relais Module ////////////
 void setupGrowLight(){
@@ -180,11 +180,11 @@ void setupGrowLight(){
   pinMode(Light_3, OUTPUT);
   pinMode(Light_4, OUTPUT);
   
-  //digitalWrite(Light_1  light_status);
-  //digitalWrite(Light_2, light_status);
-  //digitalWrite(Light_3, light_status);
-  //digitalWrite(Light_4, light_status);
-  Serial.println("starting Grow Light module...");
+  digitalWrite(Light_1, light_status);
+  digitalWrite(Light_2, light_status);
+  digitalWrite(Light_3, light_status);
+  digitalWrite(Light_4, light_status);
+  Serial.println("starting Grow Light module");
   delay(500);
 }
 
@@ -193,14 +193,10 @@ void setupPump() {
   pinMode(pumpSwitch_1, OUTPUT);
 //  pinMode(pumpSwitch_2, OUTPUT);
 
-  digitalWrite(pumpSwitch_1, HIGH);
-//  digitalWrite(pumpSwitch_2, LOW);
-
   Timer = millis();
-  Serial.println("starting pump managment...");
+  Serial.println("starting pump managment");
   delay(500);
 }
-
 
 //////////// RGB ////////////
 void setupRGBLight(){
@@ -225,16 +221,25 @@ void setupReboot(){
   RebootTimer = millis(); //sets current time to schedule reboot, this is done continuously for system stability
 }
 
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////LOOP//////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
 void loop() {
+  DateTime now = rtc.now();
+  if(day_start <= now.hour() && day_end >= now.hour()){
+    day_time = true;
+  }else{
+    day_time = false;
+  }
+  
   pumpManagement();
   LightSensorModule();
   RGBLight();
   GrowLight();
+  loop_RTC();
+  EEPROM_storage();
   Alarms();
   Display();
   
@@ -259,51 +264,56 @@ void LightSensorModule() {
   //  LightSensor.end();
 }
 
-
-
-
 //////////// Grow Light Relais Module ////////////
 void GrowLight(){
   DateTime now = rtc.now();
  
   uint16_t lux = LightSensor.GetLightIntensity();// Get Lux value
-  if ((day_start <= now.hour() && day_end >= now.hour()) == true && (lux <= lux_limit) == true){
+
+  if (day_time && lux <= lux_limit){
     light_status = HIGH;
-    digitalWrite(Light_1, light_status);// Light_2 && Light_3 && Light_4, light_status);     //Switch Relay #2 On
+    digitalWrite(Light_1, light_status);     //Switch Relay #2 On
     digitalWrite(Light_2, light_status);     //Switch Relay #3 On
     digitalWrite(Light_3, light_status);     //Switch Relay #4 On
     digitalWrite(Light_4, light_status);     //Switch Relay #5 On
   }else {
     light_status = LOW;
-    digitalWrite(Light_1, light_status); //&& Light_2 && Light_3 && Light_4, light_status);     //Switch Relay #2 OFF (in NO (Normaly open) Mode)
-    digitalWrite(Light_2, light_status);     //Switch Relay #3 OFF (in NO (Normaly open) Mode)
-    digitalWrite(Light_3, light_status);     //Switch Relay #4 OFF (in NO (Normaly open) Mode)
-    digitalWrite(Light_4, light_status);     //Switch Relay #5 OFF (in NO (Normaly open) Mode)
+    digitalWrite(Light_1, light_status);     //Switch Relay #2 OFF (in NO (Normally open) Mode)
+    digitalWrite(Light_2, light_status);     //Switch Relay #3 OFF (in NO (Normally open) Mode)
+    digitalWrite(Light_3, light_status);     //Switch Relay #4 OFF (in NO (Normally open) Mode)
+    digitalWrite(Light_4, light_status);     //Switch Relay #5 OFF (in NO (Normally open) Mode)
     }
 }
+
+
+//////////// Loop for RTC Module ////////////
+// set summer and winter timer
+void loop_RTC(){
+  DateTime now = rtc.now();
+// DST 
+//  setclock 
+  
+}
+
+//daysOfTheWeek
 
 
 //////////// Pump Switch Modules ////////////
 void pumpManagement() {
   digitalWrite(pumpSwitch_1, pumpState);
 
-  if (pumpState == HIGH && (millis() - Timer) >= runnningPump){
-      pumpState = LOW;
+  if (pumpState == HIGH){
+    if((millis() - Timer) >= runnningPump){
+      pumpState = !pumpState;
       Timer = millis();
-   }
-   if (pumpState == LOW && (millis() - Timer) >= delayPump){
-    pumpState = HIGH;
-    Timer = millis();
-   }
+      }
+  }else{
+    if((millis() - Timer) >= delayPump){
+      pumpState = !pumpState;
+      Timer = millis();
+      }
+    }
 }
-
-//   else {
- //     if((millis() - Timer) >= delayPump){
-  //      pumpState = HIGH;
-  //      Timer = millis();
-  //    }
- //   }
-//}
 
 //////////// System RGB ////////////
 void RGBLight(){
@@ -326,18 +336,21 @@ void Display(){
   }
 }
 
+
 void _Display(){
-  uint16_t lux = LightSensor.GetLightIntensity();// Get Lux value
+  uint16_t lux = LightSensor.GetLightIntensity();  // Get Lux value
+//  DateTime now = rtc.now();
   RTCtime();
-  if (light_status == HIGH){
-    Serial.println("StadtFarm in day mode, grow light on");
-  }else {
+  if (day_time){
+    Serial.print("StadtFarm in day mode");
+    if(lux > lux_limit){
+      Serial.println(": LED-Lights off");
+    }else{
+      Serial.println();
+    }
+    }else{
     Serial.println("StadtFarm in Night Mode");
   }
- // if (lux > lux_limit){
- //   Serial.println("LED-Light off");
- // }
- // else{}
   
   Serial.print("Light intensity: ");
   Serial.print(lux);
@@ -349,24 +362,30 @@ void _Display(){
 
   if(pumpState == HIGH){
     Serial.println("watering Pump running... ");
-    Serial.println(runnningPump);
-    Serial.println(delayPump);
-    Serial.println(Timer);
- //   Serial.println();
   }
-  Serial.println(millis() - Timer);
+}
+
+//////////// EEPROM_storage ////////////
+void EEPROM_storage(){
+  int temperature_in = rtc.getTemperature() / 4;
+  
+  EEPROM.write(addr, temperature_in);  // write temperature in storage
+  addr = addr + 1;
+// EEPROM.write(addr, 
+
+  if(addr == EEPROM.length()){
+    addr = 0;
+  }
 }
 
 //////////// Alarms  ////////////
 void Alarms(){
-
   if (rtc.getTemperature() >= 80){
     Serial.println("Board Temperature exceeded critical limit of 80°C, StadtFarm will be stopped for 5 minutes (current Temperature: ");
     Serial.print(rtc.getTemperature());
     Serial.println(" C");
     delay(5000);
   }
-
 }
 
 //////////// Reboot ////////////
@@ -378,7 +397,6 @@ void RebootSystem(){
     delay(10000);
     digitalWrite(ResetPin, LOW); //Resets Arduino
   }
-
 }
 
 //////////// Clock RTC DS3231 ////////////
