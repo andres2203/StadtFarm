@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="6ae34a71-c72d-4628-bad7-b0823269851c" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1j77va57tDn4AAHB5EYYCRRZaqz" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../Study" />
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="6ae34a71-c72d-4628-bad7-b0823269851c" name="Default Changelist" comment="" />
+      <created>1603143507953</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1603143507953</updated>
+    </task>
+    <task id="LOCAL-00001" summary="debugging, all working">
+      <created>1603143590342</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1603143590342</updated>
+    </task>
+    <task id="LOCAL-00002" summary="add img for readme, debug pumping loop, E-Plan modification, add EEProm storage for data">
+      <created>1604671718219</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1604671718219</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
+    <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <MESSAGE value="debugging, all working" />
+    <MESSAGE value="add img for readme, debug pumping loop, E-Plan modification, add EEProm storage for data" />
+    <option name="LAST_COMMIT_MESSAGE" value="add img for readme, debug pumping loop, E-Plan modification, add EEProm storage for data" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="327" y="99" width="794" height="850" key="CommitChangelistDialog2" timestamp="1604671718089">
+      <screen x="0" y="0" width="1920" height="1160" />
+    </state>
+    <state x="558" y="91" width="794" height="850" key="CommitChangelistDialog2/0.0.1920.1040@0.0.1920.1040" timestamp="1603143590213" />
+    <state x="327" y="99" width="794" height="850" key="CommitChangelistDialog2/0.0.1920.1160/1920.0.1920.1200@0.0.1920.1160" timestamp="1604671718089" />
+    <state x="743" y="337" width="424" height="478" key="FileChooserDialogImpl" timestamp="1605040241492">
+      <screen x="0" y="0" width="1920" height="1160" />
+    </state>
+    <state x="743" y="337" width="424" height="478" key="FileChooserDialogImpl/0.0.1920.1160/1920.0.1920.1200@0.0.1920.1160" timestamp="1605040241492" />
+    <state x="555" y="284" width="800" height="522" key="Vcs.Push.Dialog.v2" timestamp="1604671731805">
+      <screen x="0" y="0" width="1920" height="1160" />
+    </state>
+    <state x="555" y="255" width="800" height="522" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1603143599187" />
+    <state x="555" y="284" key="Vcs.Push.Dialog.v2/0.0.1920.1160/1920.0.1920.1200@0.0.1920.1160" timestamp="1604671731805" />
+  </component>
+</project>
