@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="6ae34a71-c72d-4628-bad7-b0823269851c" name="Default Changelist" comment="" />
+    <list default="true" id="6ae34a71-c72d-4628-bad7-b0823269851c" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Arduino Files/.vscode/c_cpp_properties.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Arduino Files/StadtFarm-Arduino_uno_v.7/StadtFarm-Arduino_uno_v.7.ino" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Arduino Files/StadtFarm-Arduino_uno_v.7_test/StadtFarm-Arduino_uno_v.7_test.ino" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Arduino Files/moisture-v1.0/moisture-v1.0.ino" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Arduino Files/StadtFarm-Arduino_uno_v.6.1/StadtFarm-Arduino_uno_v.6.1.ino" beforeDir="false" afterPath="$PROJECT_DIR$/Arduino Files/StadtFarm-Arduino_uno_v.6.1/StadtFarm-Arduino_uno_v.6.1.ino" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Arduino Files/StadtFarm-Arduino_uno_v.7.1_test/StadtFarm-Arduino_uno_v.7.1_test.ino" beforeDir="false" afterPath="$PROJECT_DIR$/Arduino Files/StadtFarm-Arduino_uno_v.7.1_test/StadtFarm-Arduino_uno_v.7.1_test.ino" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -22,6 +30,7 @@
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../Study" />
+    <property name="run.code.analysis.last.selected.profile" value="aDefault" />
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -54,21 +63,5 @@
     <MESSAGE value="debugging, all working" />
     <MESSAGE value="add img for readme, debug pumping loop, E-Plan modification, add EEProm storage for data" />
     <option name="LAST_COMMIT_MESSAGE" value="add img for readme, debug pumping loop, E-Plan modification, add EEProm storage for data" />
-  </component>
-  <component name="WindowStateProjectService">
-    <state x="327" y="99" width="794" height="850" key="CommitChangelistDialog2" timestamp="1604671718089">
-      <screen x="0" y="0" width="1920" height="1160" />
-    </state>
-    <state x="558" y="91" width="794" height="850" key="CommitChangelistDialog2/0.0.1920.1040@0.0.1920.1040" timestamp="1603143590213" />
-    <state x="327" y="99" width="794" height="850" key="CommitChangelistDialog2/0.0.1920.1160/1920.0.1920.1200@0.0.1920.1160" timestamp="1604671718089" />
-    <state x="743" y="337" width="424" height="478" key="FileChooserDialogImpl" timestamp="1605040241492">
-      <screen x="0" y="0" width="1920" height="1160" />
-    </state>
-    <state x="743" y="337" width="424" height="478" key="FileChooserDialogImpl/0.0.1920.1160/1920.0.1920.1200@0.0.1920.1160" timestamp="1605040241492" />
-    <state x="555" y="284" width="800" height="522" key="Vcs.Push.Dialog.v2" timestamp="1604671731805">
-      <screen x="0" y="0" width="1920" height="1160" />
-    </state>
-    <state x="555" y="255" width="800" height="522" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1603143599187" />
-    <state x="555" y="284" key="Vcs.Push.Dialog.v2/0.0.1920.1160/1920.0.1920.1200@0.0.1920.1160" timestamp="1604671731805" />
   </component>
 </project>
