@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/home/andres/snap/arduino/current/Arduino/libraries/**",
+                "/home/andres/snap/arduino/50/Arduino/libraries/**",
+                "/home/andres/.platformio/packages/framework-arduino-avr/cores/arduino",
+                "/home/andres/.platformio/packages/framework-arduino-avr/libraries/**",
+                "/home/andres/.platformio/packages/toolchain-atmelavr/avr/include",
+                "/home/andres/.platformio/packages/framework-arduino-avr/variants/standard"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/clang",
+            "cStandard": "c11",
+            "cppStandard": "c++14",
+            "intelliSenseMode": "clang-x64"
+        }
+    ],
+    "version": 4
+}

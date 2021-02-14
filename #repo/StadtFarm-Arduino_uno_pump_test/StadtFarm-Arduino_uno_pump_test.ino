@@ -14,6 +14,7 @@ int ResetPin = 12; //For Arduino Reset if Sensors are not working properly
 #define LEDred 9 // for red color LED on Pin 9
 #define LEDblue 11 // for blue color LED on Pin 11
 #define LEDgreen 10 // for green color LED on Pin 10
+// Build in LED : pinMode(LED_BUILTIN, OUTPUT);
 
 int brightness1a = 50; // Nr between 0 and 255 for brightness of LED
 int brightness1b = 150; 
@@ -25,6 +26,7 @@ bool RGBBlinkState = HIGH;
 unsigned long RGBTimer = 0; //will be rewriten on every loop
 
 
+
 //////////// Light Relais Module ////////////
 #define Light_1 2 //This is the Arduino Pin that will control Light on Relay 1
 #define Light_2 3
@@ -34,7 +36,7 @@ unsigned long RGBTimer = 0; //will be rewriten on every loop
 int day_start = 12; // time to start artificial light
 int day_end = 24; // time to end artificial light
 long lux_limit = 400; // threshold for artificial light
-bool light_status = LOW;
+bool light_status = HIGH;
 // long luxstate; // lux value for comparison
 //volatile byte relayState = LOW;
 
@@ -97,20 +99,20 @@ void setup() {
   #endif
 
   Serial.println();
-  Serial.print("Running StadtFarm Version ");
-  Serial.println(program_version);
-  Serial.println();
+//  Serial.print("Running StadtFarm Version ");
+//  Serial.println(program_version);
+//  Serial.println();
   delay(1000);
 
   setupPump();
   setupRGBLight();
   setupGrowLight();
-  setupRTC();
+//  setupRTC();
   setupLightSensor();
   setupDisplay();
   
   setupDelay();
-  setupReboot();
+//  setupReboot();
 
 
 }
@@ -191,7 +193,7 @@ void setupPump() {
   pinMode(pumpSwitch_1, OUTPUT);
 //  pinMode(pumpSwitch_2, OUTPUT);
 
-  digitalWrite(pumpSwitch_1, HIGH);
+//  digitalWrite(pumpSwitch_1, HIGH);
 //  digitalWrite(pumpSwitch_2, LOW);
 
   Timer = millis();
@@ -230,9 +232,11 @@ void setupReboot(){
 
 void loop() {
   pumpManagement();
-  LightSensorModule();
-  RGBLight();
+
   GrowLight();
+//  LightSensorModule();
+  RGBLight();
+
   Alarms();
   Display();
   
@@ -263,28 +267,21 @@ void LightSensorModule() {
 //////////// Grow Light Relais Module ////////////
 void GrowLight(){
   DateTime now = rtc.now();
- 
-  uint16_t lux = LightSensor.GetLightIntensity();// Get Lux value
-  if ((day_start <= now.hour() && day_end >= now.hour()) == true && (lux <= lux_limit) == true){
-    light_status = HIGH;
-    digitalWrite(Light_1, HIGH);// Light_2 && Light_3 && Light_4, light_status);     //Switch Relay #2 On
-    digitalWrite(Light_2, HIGH);     //Switch Relay #3 On
-    digitalWrite(Light_3, HIGH);     //Switch Relay #4 On
-    digitalWrite(Light_4, HIGH);     //Switch Relay #5 On
-  }else {
-    light_status = LOW;
-    digitalWrite(Light_1, LOW); //&& Light_2 && Light_3 && Light_4, light_status);     //Switch Relay #2 OFF (in NO (Normaly open) Mode)
-    digitalWrite(Light_2, LOW);     //Switch Relay #3 OFF (in NO (Normaly open) Mode)
-    digitalWrite(Light_3, LOW);     //Switch Relay #4 OFF (in NO (Normaly open) Mode)
-    digitalWrite(Light_4, LOW);     //Switch Relay #5 OFF (in NO (Normaly open) Mode)
-    }
+  uint16_t lux = LightSensor.GetLightIntensity();  // Get Lux value
+
+    digitalWrite(Light_1, HIGH);  //Switch Relay #2 On
+    digitalWrite(Light_2, HIGH);  //Switch Relay #3 On
+    digitalWrite(Light_3, HIGH);  //Switch Relay #4 On
+    digitalWrite(Light_4, HIGH);  //Switch Relay #5 On
 }
 
 
 //////////// Pump Switch Modules ////////////
 void pumpManagement() {
   digitalWrite(pumpSwitch_1, pumpState);
-
+  pumpState = HIGH;
+}
+/*
   if (pumpState == HIGH){
     if((millis() - Timer) >= runnningPump){
       pumpState = LOW;
@@ -297,7 +294,7 @@ void pumpManagement() {
       }
     }
 }
-
+*/
 //////////// System RGB ////////////
 void RGBLight(){
   if (pumpState == HIGH){

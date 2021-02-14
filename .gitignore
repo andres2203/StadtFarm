@@ -151,9 +151,9 @@ dmypy.json
 
 # Ignore Folders
 ## Folders with exaple data
-/Python Version/
-Arduino Files/#repo/
-/#repo/
+Python Version/
+Arduino Files/
+#repo/
 
 
 

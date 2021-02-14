@@ -16,6 +16,7 @@
 - integrate lightning time instead of daytime management:  shift lightning time, 3 week up to 10 hours
 - countdown: https://github.com/RobTillaart/CountDown
 - add security timer (2.5 min pump stop) if capac sensor not working
+- check lightsensor just by daylight, this function avoids sensor failure
 
 
 // Next StadtFarm Generation
@@ -304,7 +305,7 @@ void loop() {
   }
   
 //  pumpManagement();
-//  LightSensorModule();
+  LightSensorModule();
   Pump_Moistusture_Management();
   RGBLight();
   
@@ -326,7 +327,7 @@ void loop() {
 //////////// Light Sensor BH1750 ////////////
 void LightSensorModule() {
   uint16_t lux = LightSensor.GetLightIntensity();  // Get Lux value
-  if (lux == 0 || lux > 54000){
+  if (day_time && (lux == 0 || lux > 54000)){
     Serial.print("Light Sensor might not working properly ");  // Checks if Sensoroutput is to low or to hight and resets Arduino
     delay(10);
     Serial.println();
