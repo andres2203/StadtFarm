@@ -153,8 +153,12 @@ dmypy.json
 python/
 repo/
 .env/
+env
+idea
 .idea/
 .vscode/
+vscode
+.gitignore
 
 
 
