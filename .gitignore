@@ -150,8 +150,7 @@ dmypy.json
 .pytype/
 
 # Ignore Folders
-## Folders with exaple data
-/Python Version/
+Python Version/
 Arduino Files/
 repo/
 
