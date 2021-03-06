@@ -1,2 +1,0 @@
-import pyFirmata
-import time

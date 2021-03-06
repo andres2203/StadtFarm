@@ -150,9 +150,11 @@ dmypy.json
 .pytype/
 
 # Ignore Folders
-Python Version/
-Arduino Files/
+python/
 repo/
+.env/
+.idea/
+.vscode/
 
 
 
