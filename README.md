@@ -22,7 +22,18 @@ How to build and program a vertical garden for growing hydro cultures with Ardui
 * 12V Pump
 * 300W LED grow light
 * 15W LED grow light
-### 2.2 Supported Boards
+
+### 2.2 Required libraries
+CountDown
+https://github.com/RobTillaart/CountDow
+
+BH1750FVI_RT for BH1750FVI (GY-30) 16 bit I2C Lux sensor
+https://github.com/RobTillaart/BH1750FVI_RT
+
+RTClib
+https://github.com/adafruit/RTClib
+
+### 2.3 Supported Boards
 Arduino Uno or Elegoo UNO R3
 
 ## 3.0 Getting Started

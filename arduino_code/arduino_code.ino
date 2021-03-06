@@ -1,17 +1,5 @@
 
 /*
-Contribution to:   
-Rob Tillaart, CountDown library
-https://github.com/RobTillaart/CountDow
-
-BH1750FVI_RT for BH1750FVI (GY-30) 16 bit I2C Lux sensor
-https://github.com/RobTillaart/BH1750FVI_RT
-
-RTClib
-https://github.com/adafruit/RTClib
-
-
-
 - see if pump stops after 2.5 min
 
 //To Do:
@@ -36,7 +24,7 @@ https://github.com/adafruit/RTClib
 */
 
 //////////// StadtFarm ////////////
-float program_version = 1.0.1; //
+float program_version = 1.001; //
 #include <Arduino.h>  // to convert Arduino file to C++
 
 // Aricle Bumbers for replacement and guarantee
