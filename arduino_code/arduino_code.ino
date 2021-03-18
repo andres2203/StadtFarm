@@ -14,6 +14,7 @@
 - set summer and winter timer, just add dates in table, set time and refere to command, ex: daysOfTheWeek
 - Error_2: add Pump defect, start Timer to see how long it takes to make refil of tank: if Timer < Countdown 5 min 
 - Pump timer optimized on 2. shelve!
+- after integrating lightsensor inside shelfe add alarm: "if GrowLight == True && Lux < 1000, GrowLight defekt or Lux Sensor defekt (if no signal)"
 -- add piep to alarm mode
 
 // Next StadtFarm Generation
