@@ -5,9 +5,6 @@
 //To Do:
   Sensor_Error = true;  // has to be written in EEPROM for sys reboot when rtc not found
 - light sensor temporary deactivated in void loop 05.01.21
-- level control for storage tank
-  - build potentiometer https://create.arduino.cc/projecthub/zezarandrade/tank-control-with-arduino-a4d47f
-  - capacity measurement by copper wire (20€)
 - Grow_Light is flickering by night, some electricity pulses?!?
 - capac. sensor just for safty
 - fs_light sensor: how tho see if light sensor broken, as no feedback, maybe waiting for signal time?
@@ -27,6 +24,18 @@
 //////////// StadtFarm ////////////
 float program_version = 1.001; //
 #include <Arduino.h>  // to convert Arduino file to C++
+
+// Pin configuration
+#define LEDred 9  // for red color LED on Pin 9
+#define LEDblue 11  // for blue color LED on Pin 11
+#define LEDgreen 10  // for green color LED on Pin 10
+// integer for level control in water storage tank, 0=OK, 1=empty, Pin 13
+#define Light_1 2 //This is the Arduino Pin that will control Light on Relay 1
+#define Light_2 3
+#define Light_3 4
+#define Light_4 5
+#define ResetPin 12  //For Arduino Reset if Sensors are not working properly
+
 
 // Aricle Bumbers for replacement and guarantee
 int Capac_ArticleNr = 001;  // has to be difined
@@ -53,13 +62,10 @@ int CD_Seconds = 0;
 bool Error_1 = false;  // for red LED bling: Moisture-Sensor, Moisture-Switch Error or Outlet is clogged
 bool Error_2 = false;  // for red LED continouse: Pump defect, system Temp exceeded 80C
 bool Sensor_Error = false;  //for fail-safe operation
-#define ResetPin 12  //For Arduino Reset if Sensors are not working properly
+int Liquid_level = 0;  // integer for level control in water storage tank, 0=OK, 1=empty, Pin 13, if empty pump stops
+
 
 //////////// RGB ////////////
-#define LEDred 9  // for red color LED on Pin 9
-#define LEDblue 11  // for blue color LED on Pin 11
-#define LEDgreen 10  // for green color LED on Pin 10
-
 int brightness1a = 50;  // Nr between 0 and 255 for brightness of LED
 int brightness1b = 150; 
 int brightness1c = 250; 
@@ -71,11 +77,6 @@ unsigned long RGBTimer = 0;  // for watering Pump, will be rewriten on every loo
 unsigned long RGBTimer_2 = 0;  // timer for Error LED
 
 //////////// Light Relais Module ////////////
-#define Light_1 2 //This is the Arduino Pin that will control Light on Relay 1
-#define Light_2 3
-#define Light_3 4
-#define Light_4 5
-
 int day_start = 12;  // time to start artificial light
 int day_end = 22;  // time to end artificial light
 int lightning_germs_1 = 4;  // need less sunlight, are more delicate
@@ -156,11 +157,11 @@ void setup() {
 #endif
   
 
-  if(Sensor_Error){  // fail safe operations
+  if(Sensor_Error){  // fail safe operations, all sensors off!
     Serial.println();
-    Serial.print("StadtFarm in Emergency Mode ");
+    Serial.print("StadtFarm in Emergency Mode, all sensors off. Please check moisture, water level in storage tank occasionally");
     delay(300);
-    setupPump();
+    setupPump();  // water level has to be controlled manually
     setupRGBLight();
     setupGrowLight();
   }
@@ -175,6 +176,7 @@ void setup() {
     setupLightSensor();
     setupGrowLight();
     setupRTC();
+    setupWaterLevel();  // water level sensor in storage tank
     
   }
   RebootTimer = millis(); //sets timer to schedule reboot, this is done continuously for system stability
@@ -269,6 +271,11 @@ The data sheet recommanded To use Continuous_H_resolution_Mode */
   delay(300);
 }
 
+//////////// Water Level ////////////
+void setupWaterLevel(){
+  pinMode(10, INPUT);
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////LOOP//////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -285,7 +292,8 @@ void loop() {
 //  RTCSetTime();  // Set Summer/Winter time
     GrowLight();
 //  EEPROM_storage();  // temporary not uesd
-
+    Liquid_level = digitalRead(13);  // read pin 13 for water storage tank
+    
     if(day_start <= now.hour() && day_end >= now.hour()) {
       day_time = true;  // switch Grow light on
     }else {
@@ -433,6 +441,10 @@ void _Display_all(){
   Serial.print("Temperature: ");
   Serial.print(rtc.getTemperature());
   Serial.println(" C");
+
+  if (Liquid_level == 1) {
+    Serial.println("Water level is low, please refill water and nutrient solution (recomemndation: clean water tank)");
+  }
 }
 
 //////////// Alarms  ////////////
@@ -482,15 +494,20 @@ void LightSensorReboot() {
 void PumpMoistustureManagement() {
   SoilMoistureValue = analogRead(0); // connect sensor to Analog 0
   digitalWrite(pumpSwitch_1, pumpState);
-  
-  if (pumpState == HIGH && (millis() - PumpTimer) >= runnningPump){
+  if (Liquid_level == 0) {
+    if (pumpState == HIGH && (millis() - PumpTimer) >= runnningPump){
       pumpState = LOW;
       PumpTimer = millis();
+      }
+    if (pumpState == LOW && (millis() - PumpTimer) >= delayPump){
+      pumpState = HIGH;
+      PumpTimer = millis();
    }
-   if (pumpState == LOW && (millis() - PumpTimer) >= delayPump){
-    pumpState = HIGH;
-    PumpTimer = millis();
-   }
+  }
+  else {
+    pumpState = LOW;
+  }
+
 }
   
 /* 

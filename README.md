@@ -5,12 +5,13 @@ How to build and program a vertical garden for growing hydro cultures with Ardui
 ![CAD construction of shelf](src/Shelf_full.png)
 
 ## 1.0 Features
-* Time module
+* Time module included
 * Automated watering
 * Light intensity sensor
 * Using artificial sunlight
 * Moisture measuremnt
 * Growing up to 72 plants in parallel
+* Control of water level in storage tank
 * Alarms (water level, moisture)
 
 ## 2.0 Requirements
@@ -30,6 +31,7 @@ Arduino Uno or Elegoo UNO R3
 * [Capacitiy Sensor for moisture measurment (5,-€)](https://www.az-delivery.de/en/products/bodenfeuchte-sensor-modul-v1-2)
 * [Wire set (10,-€)](https://www.az-delivery.de/en/products/3x-breadboard-3x-jumper-wire?_pos=9&_sid=47a581137&_ss=r)
 * opt. Small Breadboard (ca. 2,-€)
+* [opt. Touchless Tank Liquid Water Level Detect Sensor (5,80€)](https://www.amazon.de/-/en/SODIAL-12-24V-Touchless-Liquid-Container/dp/B0725S85QK)
 * opt. RGB LED
 
 ### 2.2 Required libraries
@@ -67,7 +69,8 @@ Make your own research and contribute to projects
 * https://dengarden.com/gardening/indoor-hydroponic-garden
 
 ### 4.2 Maintenance
-* Add nutrient solution if conductivity is below 1.6yS (conductivits sensor will follow), clean whole system and mix new solution every 4 weeks
+* Add nutrient solution if conductivity is below 1.6yS (conductivity sensor will follow)
+* clean whole system and mix new solution every 4 weeks (reduce algae growth)
 
 ## 5.0 Troubleshooting
 
@@ -80,4 +83,4 @@ Make your own research and contribute to projects
 * optical device for Chlorophyll sensing and develop an AI
 
 ## Contributors
-* Light senor code, written by Mohannad Rawashdeh
+* Light sensor code, written by Mohannad Rawashdeh
