@@ -5,7 +5,6 @@
 //To Do:
   Sensor_Error = true;  // has to be written in EEPROM for sys reboot when rtc not found
 - Grow_Light is flickering by night, some electricity pulses?!?
-- capac. sensor just for safty
 - fs_light sensor: how tho see if light sensor broken, as no feedback, maybe waiting for signal time?
 - set summer and winter timer, just add dates in table, set time and refere to command, ex: daysOfTheWeek
 - Error_2: add Pump defect, start Timer to see how long it takes to make refil of tank: if Timer < Countdown 5 min 
@@ -17,7 +16,6 @@
 - get peristaltic pump for nutrition
 - install camera for analyzing and ai
 - todo: save: Time, Temp, Lux, on storage
-- add (capacitive) level control 
 */
 
 //////////// StadtFarm ////////////
@@ -58,9 +56,9 @@ int CD_Seconds = 0;
 #define SECS_PER_DAY  (SECS_PER_HOUR * 24L)
 
 // Fail and fail-safe parameters
+bool Sensor_Error = false;  // for fail-safe operation
 bool Error_1 = false;  // for red LED bling: Moisture-Sensor, Moisture-Switch Error or Outlet is clogged
 bool Error_2 = false;  // for red LED continouse: Pump defect, system Temp exceeded 80C
-bool Sensor_Error = false;  //for fail-safe operation
 int Liquid_level = 0;  // integer for level control in water storage tank, 0=OK, 1=empty, Pin 13, if empty pump stops
 
 
@@ -133,8 +131,8 @@ BH1750FVI LightSensor;
 
 //////////// EEPROM Storage ////////////  - not in use
 // stores analog values from 0-255
-//#include <EEPROM.h>  // include the internale arduino storage
-//int addr = 0;  // the current address in the EEPROM (i.e. which byte we're going to write to next)
+#include <EEPROM.h>  // include the internale arduino storage
+bool Check_sys = 0;  // after regular reboot full system check
 
 //////////// Display ////////////
 unsigned long DisplayTimer = 0;  // will be set current time every loop
@@ -143,6 +141,8 @@ unsigned DisplayDelay = 10 * MILISEC_PER_SEC;  // delay between print in sec.
 //////////// Reboot ////////////
 unsigned long RebootTimer = 0;
 unsigned long RebootDelay = MILISEC_PER_HOUR * 24 * 7;  // reboot every 7 days, time in hours
+unsigned long Reboot_fs = 0;
+unsigned long Reboot_fs_dealy =  MILISEC_PER_HOUR *24;  // reboot every 24h to check and do full system check (normal start)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////SETUP///////////////////////////////////////////////////////////
@@ -277,22 +277,34 @@ void setupWaterLevel(){
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////EEPROM//////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void checkEEPROM() {
+  Sensor_Error = EEPROM.read(0);
+  
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////LOOP//////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void loop() {
+  // function starting always
   RGBLight();
   Display();
   AlarmMode();
   RebootSystem();
-  if (! Sensor_Error) {
+  // functions loading if no Sensor_Error
+  if (! Sensor_Error) {  
     DateTime now = rtc.now();  // get current time
     LightSensorReboot();
     PumpManagement();
     MoistureSensor();
 //  RTCSetTime();  // Set Summer/Winter time
     GrowLight();
-//  EEPROM_storage();  // temporary not uesd
+  EEPROM_storage();  // storing alarms, loops
     Liquid_level = digitalRead(13);  // read pin 13 for water storage tank
     SoilMoistureValue = analogRead(0); // read pin 0, measure moisture
     
@@ -302,7 +314,8 @@ void loop() {
       day_time = false;  // switch grow light off
     }
   }
-  else {  // fail-safe (fs) operational mode
+  // functions loading for fail-safe (fs) operational mode
+  else {
     fs_pump_management();
     fs_Grow_Light();
   }
@@ -471,8 +484,17 @@ void RebootSystem() {
     Serial.println("StadtFarm ist rebooting, this is a routine operation, please waite... ");
     delay(10000);
     digitalWrite(ResetPin, LOW); //Resets Arduino
-  } else {
   }
+  if (Sensor_Error == true) {
+    if((millis() - Reboot_fs) > Reboot_fs_dealy){
+      Reboot_fs = millis();
+      EEPROM.update(0, false);  // set error false for full system check
+      Serial.println();
+      Serial.println("StadtFarm ist rebooting, full system check");
+      delay(10000);
+      digitalWrite(ResetPin, LOW); //Resets Arduino
+  }
+}
 }
 
 //////////// Light Sensor BH1750 ////////////
@@ -495,7 +517,7 @@ void LightSensorReboot() {
 //////////// Pump Management ////////////
 void PumpManagement() {
   digitalWrite(pumpSwitch_1, pumpState);
-  if (Moisture_state == 0 || Liquid_level == 0) {  // control moisture
+  if (Moisture_state == 0 || Liquid_level == 0) {  // control moisture and water storage level
     if (pumpState == HIGH && (millis() - PumpTimer) >= runnningPump){
       pumpState = LOW;
       PumpTimer = millis();
@@ -560,20 +582,18 @@ void GrowLight(){
   }
 }
 
-/*
+
 //////////// EEPROM_storage ////////////
 void EEPROM_storage(){
-  int temperature_in = rtc.getTemperature() / 4;
+//  int temperature_in = rtc.getTemperature() / 4;
+//  EEPROM.write(addr, temperature_in);  // write temperature in storage
+  EEPROM.update(0, Sensor_Error);  // initiate fail safe boot
+//  EEPROM.update(1, Error_1);  // Moisture-Sensor, Moisture-Switch Error or Outlet is clogged
+//  EEPROM.update(2, Error_2);  // Pump defect, system Temp exceeded 80C
   
-  EEPROM.write(addr, temperature_in);  // write temperature in storage
-  addr = addr + 1;
-// EEPROM.write(addr, 
-
-  if(addr == EEPROM.length()){
-    addr = 0;
-  }
 }
-*/
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////// fail-safe Pump Switch Modules ////////////
 void fs_pump_management() {
