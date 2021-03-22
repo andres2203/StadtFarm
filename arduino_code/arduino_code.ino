@@ -4,7 +4,6 @@
 
 //To Do:
   Sensor_Error = true;  // has to be written in EEPROM for sys reboot when rtc not found
-- light sensor temporary deactivated in void loop 05.01.21
 - Grow_Light is flickering by night, some electricity pulses?!?
 - capac. sensor just for safty
 - fs_light sensor: how tho see if light sensor broken, as no feedback, maybe waiting for signal time?
@@ -99,6 +98,7 @@ bool pumpState = HIGH; // bool for switch
 unsigned long PumpTimer = 0;
 
 //////////// Moisture ////////////
+bool Moisture_state = 0;  // bool for mosture measure, if 1 (one) ok, if 0 (zero) dry
 const int Capac_Water = 320;  // Capacity Senosr value for water
 const int Capac_Air = 615;  // Capacity Senosr value for air
 const int Capac_WaterValue_Min = 540;  // Dry, Limit moisture, start pump
@@ -288,11 +288,13 @@ void loop() {
   if (! Sensor_Error) {
     DateTime now = rtc.now();  // get current time
     LightSensorReboot();
-    PumpMoistustureManagement();
+    PumpManagement();
+    MoistureSensor();
 //  RTCSetTime();  // Set Summer/Winter time
     GrowLight();
 //  EEPROM_storage();  // temporary not uesd
     Liquid_level = digitalRead(13);  // read pin 13 for water storage tank
+    SoilMoistureValue = analogRead(0); // read pin 0, measure moisture
     
     if(day_start <= now.hour() && day_end >= now.hour()) {
       day_time = true;  // switch Grow light on
@@ -490,16 +492,15 @@ void LightSensorReboot() {
   //  LightSensor.end();
 }
 
-//////////// Moisture ////////////
-void PumpMoistustureManagement() {
-  SoilMoistureValue = analogRead(0); // connect sensor to Analog 0
+//////////// Pump Management ////////////
+void PumpManagement() {
   digitalWrite(pumpSwitch_1, pumpState);
-  if (Liquid_level == 0) {
+  if (Moisture_state == 0 || Liquid_level == 0) {  // control moisture
     if (pumpState == HIGH && (millis() - PumpTimer) >= runnningPump){
       pumpState = LOW;
       PumpTimer = millis();
       }
-    if (pumpState == LOW && (millis() - PumpTimer) >= delayPump){
+    if (Moisture_state == 0 || (pumpState == LOW && (millis() - PumpTimer) >= delayPump)){
       pumpState = HIGH;
       PumpTimer = millis();
    }
@@ -509,20 +510,17 @@ void PumpMoistustureManagement() {
   }
 
 }
-  
-/* 
-  if (SoilMoistureValue <= Capac_WaterValue_Full){
-    pumpState = LOW;
+//////////// Moisture Sensor ////////////
+void MoistureSensor() {
+  if (Capac_WaterValue_Min >= SoilMoistureValue >= Capac_WaterValue_Full){
+    Moisture_state = 1;  // moisture is high
   } 
-  if (SoilMoistureValue >= Capac_WaterValue_Min){
-    if((millis() - PumpTimer) >= runnningPump){
-      pumpState = HIGH;
-      PumpTimer = millis();
-    }
- }
+  if (SoilMoistureValue > Capac_WaterValue_Min){
+    Moisture_state = 0;  // moisture is too low
+  }
+
 }
 
-*/
 
 /*
 //////////// Loop for RTC Module ////////////
