@@ -5,6 +5,7 @@
 //To Do:
   Sensor_Error = true;  // has to be written in EEPROM for sys reboot when rtc not found
 - Grow_Light is flickering by night, some electricity pulses?!?
+- stop pump if capac thershhold esceeds certain value - OK (14.04)
 - fs_light sensor: how tho see if light sensor broken, as no feedback, maybe waiting for signal time?
 - set summer and winter timer, just add dates in table, set time and refere to command, ex: daysOfTheWeek
 - Error_2: add Pump defect, start Timer to see how long it takes to make refil of tank: if Timer < Countdown 5 min 
@@ -518,7 +519,7 @@ void LightSensorReboot() {
 void PumpManagement() {
   digitalWrite(pumpSwitch_1, pumpState);
   if (Moisture_state == 0 || Liquid_level == 0) {  // control moisture and water storage level
-    if (pumpState == HIGH && (millis() - PumpTimer) >= runnningPump){
+    if (Moisture_state == 1 || (pumpState == HIGH && (millis() - PumpTimer) >= runnningPump)){  // stops pump if moisture to high and time is up
       pumpState = LOW;
       PumpTimer = millis();
       }
